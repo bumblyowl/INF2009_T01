@@ -1,0 +1,41 @@
+# import paho.mqtt.client as mqtt
+import RPi.GPIO as GPIO
+import time
+
+# Callback function to handle connection status
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected to MQTT broker")
+    else:
+        print("Connection failed")
+
+# Callback function to handle publishing acknowledgements
+def on_publish(client, userdata, mid):
+    print("Message published")
+
+# Callback function to handle incoming messages
+def on_message(client, userdata, msg):
+    message = msg.payload.decode("utf-8")
+    if message.topic == topic_subscribe_def and message == "System off":
+            print("Received 'System off' command. Stopping...")
+            client.loop_stop()
+            GPIO.cleanup()
+            exit()
+    elif message.topic == topic_subscribe and message == "True":
+        client.publish(topic_publish, "Switch on")
+    elif message.topic == topic_subscribe and message == "False":
+        client.publish(topic_publish, "Switch off")
+
+# Assign callback functions
+client = mqtt.Client("Broker")
+client.on_connect = on_connect
+client.on_publish = on_publish
+client.on_message = on_message
+
+topic_subscribe = "person_detection"
+topic_subscribe_def = "computer_status"
+topic_publish = "camera_status"
+
+client.connect("localhost", 1883)
+client.subscribe(topic_subscribe)
+client.loop_start()
