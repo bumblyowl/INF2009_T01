@@ -1,0 +1,87 @@
+import RPi.GPIO as GPIO
+import time
+import paho.mqtt.client as mqtt
+
+# GPIO pins
+trigger_pin = 18
+echo_pin = 24
+
+# Setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(trigger_pin, GPIO.OUT)
+GPIO.setup(echo_pin, GPIO.IN)
+
+# Callback function to handle connection status
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected to MQTT broker")
+        client.subscribe(topic_subscribe)
+    else:
+        print("Connection failed")
+
+# Callback function to handle publishing acknowledgements
+def on_publish(client, userdata, mid):
+    print("Message published")
+
+# Callback function to handle incoming messages
+def on_message(client, userdata, msg):
+    message = msg.payload.decode("utf-8")
+    if message == "System off":
+        print("Received 'System off' command. Stopping...")
+        client.loop_stop()
+        GPIO.cleanup()
+        exit()
+
+# Initialize MQTT client
+client = mqtt.Client("Broker")
+client.on_connect = on_connect
+client.on_publish = on_publish
+client.on_message = on_message
+
+# Connect to MQTT broker
+client.connect("localhost", 1883)
+client.loop_start()
+
+def send_message(status):
+    timestamp = time.strftime("%H:%M:%S")
+    message = [status, timestamp]
+    client.publish(topic_publish, str(message))
+    print(f"Message sent: {message}")
+
+def get_distance():
+    # Trigger ultrasonic sensor
+    GPIO.output(trigger_pin, GPIO.HIGH)
+    time.sleep(0.00001)
+    GPIO.output(trigger_pin, GPIO.LOW)
+
+    # Wait for the echo response
+    while GPIO.input(echo_pin) == 0:
+        pulse_start_time = time.time()
+
+    while GPIO.input(echo_pin) == 1:
+        pulse_end_time = time.time()
+
+    # Calculate distance in centimeters (not used in this version)
+    pulse_duration = pulse_end_time - pulse_start_time
+    speed_of_sound = 34300  # Speed of sound in cm/s
+    distance = (pulse_duration * speed_of_sound) / 2
+
+    return distance
+
+try:
+    while True:
+        distance = get_distance()
+
+        if 40 <= distance <= 76:
+            send_message(0)
+        elif distance > 76:
+            send_message(1)
+        elif distance < 40:
+            send_message(-1)
+
+        time.sleep(1)
+
+# except KeyboardInterrupt:
+#     print("Measurement stopped by the user.")
+# finally:
+#     GPIO.cleanup()
