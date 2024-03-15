@@ -37,7 +37,7 @@ client.loop_start()
 
 # GPIO pins
 trigger_pin = 18
-echo_pin = 24
+echo_pin = 21
 
 # Setup
 GPIO.setmode(GPIO.BCM)
