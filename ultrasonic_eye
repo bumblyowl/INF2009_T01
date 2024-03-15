@@ -3,8 +3,8 @@ import time
 import paho.mqtt.client as mqtt
 
 # GPIO pins
-trigger_pin = 18
-echo_pin = 24
+trigger_pin = 2
+echo_pin = 3
 
 # Setup
 GPIO.setmode(GPIO.BCM)
