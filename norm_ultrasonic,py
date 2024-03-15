@@ -1,41 +1,11 @@
-import RPi.GPIO as GPIO
-import time
+from gpiozero import DistanceSensor
 
-# GPIO pins
-trigger_pin = 18
-echo_pin = 24
+# Replace with your trigger and echo pin numbers
+sensor = DistanceSensor(echo=17, trigger=4)
 
-# Setup
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(trigger_pin, GPIO.OUT)
-GPIO.setup(echo_pin, GPIO.IN)
-
-def get_distance():
-    # Trigger ultrasonic sensor
-    GPIO.output(trigger_pin, GPIO.HIGH)
-    time.sleep(0.00001)
-    GPIO.output(trigger_pin, GPIO.LOW)
-
-    # Wait for the echo response
-    while GPIO.input(echo_pin) == 0:
-        pulse_start_time = time.time()
-
-    while GPIO.input(echo_pin) == 1:
-        pulse_end_time = time.time()
-
-    # Calculate distance in centimeters
-    pulse_duration = pulse_end_time - pulse_start_time
-    speed_of_sound = 34300  # Speed of sound in cm/s
-    distance = (pulse_duration * speed_of_sound) / 2
-
-    return distance
-
-try:
-    while True:
-        distance = get_distance()
-        print("Distance:", distance, "cm")
-        time.sleep(1)
-
-except KeyboardInterrupt:
-    print("Measurement stopped by user")
-    GPIO.cleanup()
+while True:
+  # Get distance in centimeters
+  distance = sensor.distance
+  print(f"Distance to object: {distance:.2f} cm")
+  # Delay between measurements (optional)
+  # time.sleep(0.1)
