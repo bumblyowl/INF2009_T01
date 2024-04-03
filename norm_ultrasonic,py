@@ -1,11 +1,44 @@
-from gpiozero import DistanceSensor
+import RPi.GPIO as GPIO
+import time
 
-# Replace with your trigger and echo pin numbers
-sensor = DistanceSensor(echo=17, trigger=4)
+# Define GPIO pins (modify if you used different pins)
+TRIG_PIN = 23
+ECHO_PIN = 24
 
-while True:
-  # Get distance in centimeters
-  distance = sensor.distance
-  print(f"Distance to object: {distance:.2f} cm")
-  # Delay between measurements (optional)
-  # time.sleep(0.1)
+# Set up GPIO pins
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(TRIG_PIN, GPIO.OUT)
+GPIO.setup(ECHO_PIN, GPIO.IN)
+
+def distance():
+    # Send trigger pulse
+    GPIO.output(TRIG_PIN, True)
+    time.sleep(0.00001)  # 10 microsecond pulse
+    GPIO.output(TRIG_PIN, False)
+
+    # Wait for echo pulse to start
+    while GPIO.input(ECHO_PIN) == 0:
+        pass
+    pulse_start = time.time()
+
+    # Wait for echo pulse to end
+    while GPIO.input(ECHO_PIN) == 1:
+        pass
+    pulse_end = time.time()
+
+    # Calculate pulse duration
+    pulse_duration = pulse_end - pulse_start
+
+    # Calculate distance (speed of sound is 34300 cm/s)
+    distance = pulse_duration * 34300 / 2  # Divide by 2 for round trip
+
+    return distance
+
+# Try measuring distance a few times
+for _ in range(5):
+    dist = distance()
+    print("Distance:", dist, "cm")
+    time.sleep(1)
+
+# Clean up GPIO
+GPIO.cleanup()
