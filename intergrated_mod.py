@@ -52,16 +52,18 @@ def switch_on_camera():
 
     return cap
 
+# Function to calculate angle between two vectors
+def calculate_angle(v1, v2):
+    dot_product = v1[0] * v2[0] + v1[1] * v2[1]
+    magnitude_v1 = math.sqrt(v1[0]**2 + v1[1]**2)
+    magnitude_v2 = math.sqrt(v2[0]**2 + v2[1]**2)
+    cosine_angle = dot_product / (magnitude_v1 * magnitude_v2)
+    angle = math.degrees(math.acos(cosine_angle)) 
+    
+    return angle
+        
 def analyze_posture(cap):
     overall_feedback = "No Pose Detected"
-    # Function to calculate angle between two vectors
-    def calculate_angle(v1, v2):
-        dot_product = v1[0] * v2[0] + v1[1] * v2[1]
-        magnitude_v1 = math.sqrt(v1[0]**2 + v1[1]**2)
-        magnitude_v2 = math.sqrt(v2[0]**2 + v2[1]**2)
-        cosine_angle = dot_product / (magnitude_v1 * magnitude_v2)
-        angle = math.degrees(math.acos(cosine_angle)) 
-        return angle
 
     # Initialize the pose model
     mp_pose = mp.solutions.pose
