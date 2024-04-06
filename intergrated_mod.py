@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-import mysql.connect
+import mysql.connector
 import cv2
 import mediapipe as mp
 import math
@@ -9,11 +9,11 @@ from plyer import notification
 
 # Establish connection to the database
 db_connection = mysql.connector.connect(
-    host:="localhost",
-    user:="lucas",
-    password:="your_password",
-    database:="edge",
-    port:= 3306
+    host="localhost",
+    user="lucas",
+    password="your_password",
+    database="edge",
+    port=3306
 )
 
 # username = get from website
@@ -46,7 +46,7 @@ def switch_on_camera(max_retries=3, retry_interval=1):
     cap = None
 
     while retries < max_retries:
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(-1)
         
         if cap.isOpened():
             print("Camera opened successfully.")
@@ -168,6 +168,7 @@ def main():
     min_eye_distance = 30
 
     try:
+        bp_status = 0
         while True:
             distance = calculate_distance()
             print("Distance:", distance, "cm")
@@ -175,33 +176,39 @@ def main():
             if distance < 100:
                 person_detected = True
                 stream = switch_on_camera()
-                body_posture, frame = analyze_posture(stream)
+                if stream is not None:
+                    body_posture, frame = analyze_posture(stream)
+                    if (distance < min_eye_distance or distance > max_eye_distance) and body_posture == "Incorrect Posture":
+                        continue
+                    else:
+                        timeCount = 0
+                        timestamp = time.time()
+                        while body_posture == "Incorrect Posture":
+                            timeCount += 1
+                            if timeCount == 10:
+                                frame_bytes = cv2.imencode('posture_frame.jpg', frame)[1].tobytes()
+                                timeStart = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
+                                bp_status = 1
 
-                if (distance < min_eye_distance or distance > max_eye_distance) and body_posture == "Incorrect Posture":
-                    continue
+                        if bp_status == 1:
+                            duration = time.time() - timestamp
+                            eyeDist = distance 
+                            insert_query = "INSERT INTO info (username, timeStart, image, duration, eyeDist) VALUES (%s, %s, %s, %s, %s)"
+                            cursor.execute(insert_query, (username, timeStart, frame_bytes, duration, eyeDist))
+                            db_connection.commit()
+                            send_notification("Poor Posture Detected", "This is a notification from the Streamlit app")
+                            bp_status = 0
                 else:
-                    timeCount = 0
-                    timestamp = time.time()
-                    while body_posture == "Incorrect Posture":
-                        timeCount += 1
-                        if timeCount == 10:
-                            frame_bytes = cv2.imencode('posture_frame.jpg', frame)[1].tobytes()
-                            timeStart = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
-                            bp_status = 1
-
-                    if bp_status == 1:
-                        duration = time # or should we just use another timestamp and retrieve the minutes
-                        eyeDist = distance 
-                        insert_query = "INSERT INTO info (username, timeStart, image, duration, eyeDist) VALUES (%s, %s, %s, %s, %s)"
-                        cursor.execute(insert_query, (username, timeStart, image, duration, eyeDist))
-                        send_notification("Poor Posture Detected", "This is a notification from the Streamlit app")
-
+                    print("Cannot proceed as camera has failed to open.")
+                    
     except KeyboardInterrupt:
         GPIO.cleanup()
 
+    finally:
+        # Close the database connection
+        db_connection.close()
+
 if __name__ == "__main__":
     main()
-
-    
 
     
