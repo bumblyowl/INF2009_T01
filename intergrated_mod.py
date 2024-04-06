@@ -198,8 +198,8 @@ def main():
                             db_connection.commit()
                             send_notification("Poor Posture Detected", "This is a notification from the Streamlit app")
                             bp_status = 0
-                else:
-                    print("Cannot proceed as camera has failed to open.")
+                 else:
+                       print("Cannot proceed as camera has failed to open.")
                     
     except KeyboardInterrupt:
         GPIO.cleanup()
