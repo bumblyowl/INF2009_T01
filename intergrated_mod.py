@@ -192,7 +192,7 @@ def main():
                     if bp_status == 1:
                         duration = time # or should we just use another timestamp and retrieve the minutes
                         eyeDist = distance 
-                        insert_query = "INSERT INTO your_table_name (username, timeStart, image, duration, eyeDist) VALUES (%s, %s, %s, %s, %s)"
+                        insert_query = "INSERT INTO info (username, timeStart, image, duration, eyeDist) VALUES (%s, %s, %s, %s, %s)"
                         cursor.execute(insert_query, (username, timeStart, image, duration, eyeDist))
                         send_notification("Poor Posture Detected", "This is a notification from the Streamlit app")
 
