@@ -7,13 +7,13 @@ import math
 import time
 from plyer import notification
 
-# # Establish connection to the database
-# db_connection = mysql.connector.connect(
-#     host="your_host",
-#     user="your_username",
-#     password="your_password",
-#     database="your_database"
-# )
+# Establish connection to the database
+db_connection = mysql.connector.connect(
+    host="localhost",
+    user="lucas",
+    password="your_password",
+    database="edge"
+)
 
 # username = get from website
 
