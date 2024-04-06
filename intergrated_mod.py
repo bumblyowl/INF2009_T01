@@ -9,11 +9,11 @@ from plyer import notification
 
 # Establish connection to the database
 db_connection = mysql.connector.connect(
-    host="localhost",
-    user="lucas",
-    password="your_password",
-    database="edge",
-    port = 3306
+    host:="localhost",
+    user:="lucas",
+    password:="your_password",
+    database:="edge",
+    port:= 3306
 )
 
 # username = get from website
