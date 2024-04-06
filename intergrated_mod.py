@@ -30,7 +30,6 @@ start_time = 0
 end_time = 0
 echo_started = False
 person_detected = False
-timestamp = 0
 bp_status = 0
 
 def send_notification(title, message):
@@ -41,16 +40,24 @@ def send_notification(title, message):
         timeout=10  # Notification timeout in seconds
     )
 
-def switch_on_camera():
+def switch_on_camera(max_retries=3, retry_interval=1):
+    retries = 0
+    cap = None
 
-    # Initialize the video capture object
-    cap = cv2.VideoCapture(0)
+    while retries < max_retries:
+        cap = cv2.VideoCapture(0)
+        
+        if cap.isOpened():
+            print("Camera opened successfully.")
+            return cap
+        
+        print(f"Error: Unable to open camera. Retrying in {retry_interval} seconds...")
+        retries += 1
+        time.sleep(retry_interval)
 
-    if not cap.isOpened():
-        print("Error: Unable to open camera.")
-        return None
+    print("Failed to open camera after multiple retries.")
+    return None
 
-    return cap
 
 # Function to calculate angle between two vectors
 def calculate_angle(v1, v2):
@@ -172,11 +179,11 @@ def main():
                 if (distance < min_eye_distance or distance > max_eye_distance) and body_posture == "Incorrect Posture":
                     continue
                 else:
-                    time = 0
+                    timeCount = 0
                     timestamp = time.time()
                     while body_posture == "Incorrect Posture":
-                        time += 1
-                        if time == 10:
+                        timeCount += 1
+                        if timeCount == 10:
                             frame_bytes = cv2.imencode('posture_frame.jpg', frame)[1].tobytes()
                             timeStart = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
                             bp_status = 1
@@ -193,5 +200,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    
 
     
