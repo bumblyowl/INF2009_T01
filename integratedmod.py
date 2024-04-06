@@ -203,8 +203,8 @@ def main():
                             print("IN ELSE")
                             timeCount = 0
                             timestamp = time.time()
+                            bp_status = 0
                             while(body_posture == "Incorrect Posture"):
-                                bp_status = 0
                                 body_posture, frame = analyze_posture(stream)
                                 print("IN IF")
                                 print(body_posture)
@@ -217,21 +217,28 @@ def main():
                                     bp_status = 1
                                     continue
                             
-                                elif(body_posture != "Incorrect Posture" and bp_status == 1):
-                                    print("ITS TIME TO APPEND TO APPEND TO DB!")
-                                    #initialise db cursor
-                                    cursor = db_connection.cursor()
+                            if(body_posture != "Incorrect Posture" and bp_status == 1):
+                                print("ITS TIME TO APPEND TO APPEND TO DB!")
+                                    
+                                duration = timeCount
+                                    
+                                eyeDist = distance
+                                    
+                                #initialise db cursor
+                                cursor = db_connection.cursor()
                                             
-                                    #craft insert query with values from variables
-                                    insert_query = "INSERT INTO info (username, timeStart, image, duration, eyeDist) VALUES (%s, %s, %s, %s, %s)"
+                                #craft insert query with values from variables
+                                insert_query = "INSERT INTO info (username, timeStart, image, duration, eyeDist) VALUES (%s, %s, %s, %s, %s)"
                                             
-                                    #execute and commit query
-                                    cursor.execute(insert_query, (username, timeStart, frame_bytes, duration, eyeDist))
-                                    db_connection.commit()
-                                    print("SUCEESS")
+                                #execute and commit query
+                                cursor.execute(insert_query, (username, timeStart, frame_bytes, duration, eyeDist))
+                                db_connection.commit()
+                                print("SUCEESS")
                                             
-                                    #Close the cursor and database connection
-                                    cursor.close()
+                                #Close the cursor and database connection
+                                cursor.close()
+                                bp_status = 0
+                                continue
                                         
                                     #send_notification("Poor Posture Detected", "This is a notification from the Streamlit app")
                     
