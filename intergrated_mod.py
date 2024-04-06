@@ -53,6 +53,7 @@ def switch_on_camera():
     return cap
 
 def analyze_posture(cap):
+    overall_feedback = "No Pose Detected"
     # Function to calculate angle between two vectors
     def calculate_angle(v1, v2):
         dot_product = v1[0] * v2[0] + v1[1] * v2[1]
@@ -122,6 +123,7 @@ def analyze_posture(cap):
         
 
     return overall_feedback, frame
+
 
 
 
