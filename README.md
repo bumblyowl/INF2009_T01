@@ -8,7 +8,7 @@ Hardware Components:
 - USB Webcam
     Captures images of the user's sitting posture for analysis.
 - Ultrasonic Sensors
-    Detects the presence of users to activate the webcam and initiate posture monitoring.
+    Detects the presence of users to activate the webcam and initiate posture monitoring. Connect to GPIO23 for TRIG and GPIO24 for ECHO
 
 
 Software Components:
