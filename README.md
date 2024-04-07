@@ -1,6 +1,6 @@
 # INF2009_T01
 ![image](https://github.com/bumblyowl/INF2009_T01/assets/86668765/83d3b875-b7ba-415d-83f0-89e4ef36fd67)
-The project setup consists of the following:
+**Set Up**
 
 Hardware Components:
 - Raspberry Pico 400 Microcontroller
@@ -22,4 +22,33 @@ Software Components:
     Visualisation of data stored from a single session
 
   
-  
+![image](https://github.com/bumblyowl/INF2009_T01/assets/86668765/4274b6f7-f883-4652-a631-3b6fc5a43265)
+**Methodology**
+
+User Setup and Application Start:
+The user sets up the hardware components, including the Raspberry Pi with ultrasonic sensor and webcam.
+After login, the user starts the application on the Raspberry Pi.
+
+Presence Detection and Webcam Activation:
+The ultrasonic sensor detects the user's presence (if the individual is within 100cm from the ultrasonic), activating the webcam.
+
+Posture Analysis with MediaPipe Algorithm:
+Video data captured by the webcam is processed through the MediaPipe algorithm on the Raspberry Pi.
+MediaPipe analyzes the user's posture based on the captured video data and distance from the ultrasonic sensor.
+Through research, the group decided on the justification of correct posture which is:
+- an eye distance between 30 - 76cm
+- an elbow angle between 90 - 120°
+- a back angle (spine and leg) between 90 - 120°
+- a leg angle (spine and leg) between 90 - 130°
+
+
+Snapshot and Database Storage:
+
+When an incorrect posture is detected, the system triggers a 10-second pause, allowing users to readjust their posture and enabling the system to assess if the posture adopted is not of a whim but intended by the user.
+If the incorrect posture remains after a 10-second wait, the application takes a snapshot of the user's incorrect posture.
+The snapshot is stored in a database for future reference and analysis.
+
+
+Session End and Dashboard Access:
+The user can end the session and access the dashboard through the user interface.
+The dashboard displays the day's posture analysis, including posture data, notifications, and stored snapshots.
