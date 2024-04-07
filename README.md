@@ -27,6 +27,35 @@ Software Components:
 
 User Setup and Application Start:
 The user sets up the hardware components, including the Raspberry Pi with ultrasonic sensor and webcam.
+
+To wire up ultrasonic sensor, use jumper wires to connect the following:
+
+Pi - Ultrasonic Sensor
+
+5V - VCC
+GRND - GRND
+GPIO23 - TRIGGER
+GPIO24 - ECHO
+
+
+Connect USB webcam to Pi via USB PORT
+
+
+
+
+
+Once powered on, the Raspberry Pi will auto-login.
+User opens terminal and types the following command:
+
+1) source myenv/bin/activate  (This activates the virtual environment)
+2) cd Desktop (This changes the directory to desktop, which contains the python file to run)
+
+For GUI to start Monitoring: 
+1) python run main.py
+
+For viewing of Dashboard:
+1) streamlit run dashboard.py
+
 After login, the user starts the application on the Raspberry Pi.
 
 Presence Detection and Webcam Activation:
