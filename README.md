@@ -72,7 +72,6 @@ Through research, the group decided on the justification of correct posture whic
 
 
 Snapshot and Database Storage:
-
 When an incorrect posture is detected, the system triggers a 10-second pause, allowing users to readjust their posture and enabling the system to assess if the posture adopted is not of a whim but intended by the user.
 If the incorrect posture remains after a 10-second wait, the application takes a snapshot of the user's incorrect posture.
 The snapshot is stored in a database for future reference and analysis.
@@ -81,3 +80,5 @@ The snapshot is stored in a database for future reference and analysis.
 Session End and Dashboard Access:
 The user can end the session and access the dashboard through the user interface.
 The dashboard displays the day's posture analysis, including posture data, notifications, and stored snapshots.
+
+* Please refer to the main_final.py and final_final_final_dashboard.py for the most recent code for this project. The other.py files in the folder "archive" are previous drafts. 
